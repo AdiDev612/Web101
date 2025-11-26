@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="logo">Dashboard</div>
+      <nav class="nav">
+        <a class="nav-link active" href="#" id="dashboardNav">
+          <span class="icon">⚙️</span>
+          <span>Dashboard</span>
+        </a>
+        <div class="nav-group">
+          <button class="nav-link toggle" type="button" id="profileToggle" aria-expanded="false" aria-controls="profileMenu">
+            <div class="left">
+              <span class="icon">👤</span>
+              <span>Profiles</span>
+            </div>
+            <span class="chevron">▾</span>
+          </button>
+          <div class="submenu" id="profileMenu" role="menu">
+            <a href="#" role="menuitem" data-profile="profile1">Adrian Rullan</a>
+            <a href="#" role="menuitem" data-profile="profile2">Andrie Antinew</a>
+            <a href="#" role="menuitem" data-profile="profile3">Norhanna Ali</a>
+            <a href="#" role="menuitem" data-profile="profile4">Daren Ulep</a>
+            <a href="#" role="menuitem" data-profile="profile5">Lyka Javier</a>
+          </div>
+        </div>
+      </nav>
+      <button class="logout">
+        <span>↩</span>
+        .
+      </button>
+    </aside>
+
+    <main class="dashboard">
+      <header class="dashboard-header">
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+      </header>
+
+      <section class="member-card" id="memberCard" aria-live="polite">
+        <div>
+          <p class="label">Members</p>
+          <h2>5</h2>
+          <p class="helper">Total Group Members</p>
+        </div>
+        <span class="badge">👥</span>
+      </section>
+
+      <section class="profile-card hidden" id="profilePanel" aria-live="polite">
+        <div class="profile-left">
+          <div class="profile-avatar">
+            <img src="" alt="Profile avatar" />
+          </div>
+          <div class="profile-info">
+            <h2 id="profileName"></h2>
+          </div>
+          <ul class="profile-details">
+            <li>
+              <span>Age:</span>
+              <strong id="profileAge"></strong>
+            </li>
+            <li>
+              <span>Address:</span>
+              <strong id="profileAddress"></strong>
+            </li>
+            <li>
+              <span>Contact No:</span>
+              <strong id="profileNumber"></strong>
+            </li>
+            <li>
+              <span>Email:</span>
+              <strong id="profileEmail"></strong>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+
+<script>
+  const profileToggle = document.getElementById('profileToggle');
+  const profileMenu = document.getElementById('profileMenu');
+  const profilePanel = document.getElementById('profilePanel');
+  const memberCard = document.getElementById('memberCard');
+  const dashboardNav = document.getElementById('dashboardNav');
+  const pageTitle = document.getElementById('pageTitle');
+
+  if (profileToggle && profileMenu) {
+    profileToggle.addEventListener('click', () => {
+      const isOpen = profileMenu.classList.toggle('open');
+      profileToggle.setAttribute('aria-expanded', isOpen);
+    });
+  }
+
+  const profileName = document.getElementById('profileName');
+  const profileAge = document.getElementById('profileAge');
+  const profileAddress = document.getElementById('profileAddress');
+  const profileNumber = document.getElementById('profileNumber');
+  const profileEmail = document.getElementById('profileEmail');
+
+  const profileData = {
+    profile1: {
+      name: 'Rullan, Adrian E.',
+      age: '19',
+      address: 'Blk 2 Lot 20 California Dreamhomes San Bartolome',
+      number: '09947830811',
+      email: 'adrianrullan62@gmail.com',
+      avatar: 'Avatar/123.jpeg'
+    },
+    profile2: {
+      name:'Antinew, Andrie O.',
+      age:'19',
+      address: 'Blk14 lot 4 asamab comp',
+      number: '09619193621',
+      email: 'andrieantinew6@gmail.com',
+      avatar: '#'
+    },
+    profile3: {
+      name: 'Ali, Norhanna M.',
+      age: '19',
+      address: '288, St, Paul Street. Brgy Holy Spirit Q.C',
+      number: '09814752889',
+      email: 'norhannahali1@gmail.com',
+      avatar: '#'
+    },
+    profile4: {
+      name: 'Ulep, Daren M.',
+      age: '19',
+      address: '1414 Sampaguita Street, Maria Tala Caloocan City',
+      number: '09638256654',
+      email: 'thedarenu@gmail.com',
+      avatar: '#'
+    },
+    profile5: {
+      name: 'Lyka',
+      age: '#',
+      address: '#',
+      number: '#',
+      email: '#',
+      avatar: '#'
+    }
+  };
+
+  const profileAvatar = document.querySelector('#profilePanel img');
+
+  profileMenu?.addEventListener('click', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLElement && target.dataset.profile) {
+      const data = profileData[target.dataset.profile];
+      if (!data) return;
+      event.preventDefault();
+      profileMenu.querySelectorAll('a').forEach((link) => link.classList.remove('active'));
+      target.classList.add('active');
+      if (profileName) profileName.textContent = data.name;
+      if (profileAge) profileAge.textContent = data.age;
+      if (profileAddress) profileAddress.textContent = data.address;
+      if (profileNumber) profileNumber.textContent = data.number;
+      if (profileEmail) profileEmail.textContent = data.email;
+      if (profileAvatar) profileAvatar.src = data.avatar;
+      profilePanel?.classList.remove('hidden');
+      memberCard?.classList.add('hidden');
+      dashboardNav?.classList.remove('active');
+      profileToggle?.classList.add('active');
+      if (pageTitle) {
+        pageTitle.textContent = 'Profile';
+      }
+    }
+  });
+
+  dashboardNav?.addEventListener('click', (event) => {
+    event.preventDefault();
+    memberCard?.classList.remove('hidden');
+    profilePanel?.classList.add('hidden');
+    profileMenu?.querySelectorAll('a').forEach((link) => link.classList.remove('active'));
+    dashboardNav?.classList.add('active');
+    profileToggle?.classList.remove('active');
+    if (pageTitle) {
+      pageTitle.textContent = 'Dashboard';
+    }
+  });
+</script>
+
+</html>
+
+
+
+
