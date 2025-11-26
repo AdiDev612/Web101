@@ -24,7 +24,7 @@
           <button class="nav-link toggle" type="button" id="profileToggle" aria-expanded="false" aria-controls="profileMenu">
             <div class="left">
               <span class="icon">👤</span>
-              <span>Profile</span>
+              <span>Profiles</span>
             </div>
             <span class="chevron">▾</span>
           </button>
@@ -163,6 +163,8 @@
       const data = profileData[target.dataset.profile];
       if (!data) return;
       event.preventDefault();
+      profileMenu.querySelectorAll('a').forEach((link) => link.classList.remove('active'));
+      target.classList.add('active');
       if (profileName) profileName.textContent = data.name;
       if (profileAge) profileAge.textContent = data.age;
       if (profileAddress) profileAddress.textContent = data.address;
@@ -171,6 +173,8 @@
       if (profileAvatar) profileAvatar.src = data.avatar;
       profilePanel?.classList.remove('hidden');
       memberCard?.classList.add('hidden');
+      dashboardNav?.classList.remove('active');
+      profileToggle?.classList.add('active');
       if (pageTitle) {
         pageTitle.textContent = 'Profile';
       }
@@ -181,6 +185,9 @@
     event.preventDefault();
     memberCard?.classList.remove('hidden');
     profilePanel?.classList.add('hidden');
+    profileMenu?.querySelectorAll('a').forEach((link) => link.classList.remove('active'));
+    dashboardNav?.classList.add('active');
+    profileToggle?.classList.remove('active');
     if (pageTitle) {
       pageTitle.textContent = 'Dashboard';
     }

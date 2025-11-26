@@ -122,9 +122,20 @@ a {
 }
 
 .submenu a {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.9rem;
-  padding: 4px 0;
+  padding: 6px 10px;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.submenu a:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.submenu a.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
 .logout {
