@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="logo">Dashboard</div>
+      <nav class="nav">
+        <a class="nav-link active" href="#" id="dashboardNav">
+          <span class="icon">⚙️</span>
+          <span>Dashboard</span>
+        </a>
+        <div class="nav-group">
+          <button class="nav-link toggle" type="button" id="profileToggle" aria-expanded="false" aria-controls="profileMenu">
+            <div class="left">
+              <span class="icon">👤</span>
+              <span>Profile</span>
+            </div>
+            <span class="chevron">▾</span>
+          </button>
+          <div class="submenu" id="profileMenu" role="menu">
+            <a href="#" role="menuitem" data-profile="profile1">Profile 1</a>
+            <a href="#" role="menuitem" data-profile="profile2">Profile 2</a>
+            <a href="#" role="menuitem" data-profile="profile3">Profile 3</a>
+            <a href="#" role="menuitem" data-profile="profile4">Profile 4</a>
+            <a href="#" role="menuitem" data-profile="profile5">Profile 5</a>
+          </div>
+        </div>
+      </nav>
+      <button class="logout">
+        <span>↩</span>
+        .
+      </button>
+    </aside>
+
+    <main class="dashboard">
+      <header class="dashboard-header">
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+      </header>
+
+      <section class="member-card" id="memberCard" aria-live="polite">
+        <div>
+          <p class="label">Members</p>
+          <h2>5</h2>
+          <p class="helper">Total Group Members</p>
+        </div>
+        <span class="badge">👥</span>
+      </section>
+
+      <section class="profile-card hidden" id="profilePanel" aria-live="polite">
+        <div class="profile-left">
+          <div class="profile-avatar">
+            <img src="" alt="Profile avatar" />
+          </div>
+          <ul class="profile-details">
+            <li>
+              <span>Age</span>
+              <strong id="profileAge"></strong>
+            </li>
+            <li>
+              <span>Address</span>
+              <strong id="profileAddress"></strong>
+            </li>
+            <li>
+              <span>Number</span>
+              <strong id="profileNumber"></strong>
+            </li>
+            <li>
+              <span>Email</span>
+              <strong id="profileEmail"></strong>
+            </li>
+          </ul>
+        </div>
+        <div class="profile-info">
+          <h2 id="profileName"></h2>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+
+<script>
+  const profileToggle = document.getElementById('profileToggle');
+  const profileMenu = document.getElementById('profileMenu');
+  const profilePanel = document.getElementById('profilePanel');
+  const memberCard = document.getElementById('memberCard');
+  const dashboardNav = document.getElementById('dashboardNav');
+  const pageTitle = document.getElementById('pageTitle');
+
+  if (profileToggle && profileMenu) {
+    profileToggle.addEventListener('click', () => {
+      const isOpen = profileMenu.classList.toggle('open');
+      profileToggle.setAttribute('aria-expanded', isOpen);
+    });
+  }
+
+  const profileName = document.getElementById('profileName');
+  const profileAge = document.getElementById('profileAge');
+  const profileAddress = document.getElementById('profileAddress');
+  const profileNumber = document.getElementById('profileNumber');
+  const profileEmail = document.getElementById('profileEmail');
+
+  const profileData = {
+    profile1: {
+      name: 'Adrian E. Rullan',
+      age: '19',
+      address: '',
+      number: '(555) 123-9876',
+      email: '',
+      avatar: ''
+    },
+    profile2: {
+      name: 'Devon Lane',
+      age: '34',
+      address: '443 Oak Avenue, Portland',
+      number: '(555) 555-8899',
+      email: 'devon.lane@example.com',
+      avatar: 'https://i.pravatar.cc/120?img=12'
+    },
+    profile3: {
+      name: 'Courtney Henry',
+      age: '27',
+      address: '98 Pine Road, Austin',
+      number: '(555) 221-9087',
+      email: 'courtney.henry@example.com',
+      avatar: 'https://i.pravatar.cc/120?img=32'
+    },
+    profile4: {
+      name: 'Wade Warren',
+      age: '31',
+      address: '54 Cedar Blvd, Denver',
+      number: '(555) 678-1234',
+      email: 'wade.warren@example.com',
+      avatar: 'https://i.pravatar.cc/120?img=25'
+    },
+    profile5: {
+      name: 'Esther Howard',
+      age: '36',
+      address: '210 Birch Lane, Seattle',
+      number: '(555) 444-0110',
+      email: 'esther.howard@example.com',
+      avatar: 'https://i.pravatar.cc/120?img=5'
+    }
+  };
+
+  const profileAvatar = document.querySelector('#profilePanel img');
+
+  profileMenu?.addEventListener('click', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLElement && target.dataset.profile) {
+      const data = profileData[target.dataset.profile];
+      if (!data) return;
+      event.preventDefault();
+      if (profileName) profileName.textContent = data.name;
+      if (profileAge) profileAge.textContent = data.age;
+      if (profileAddress) profileAddress.textContent = data.address;
+      if (profileNumber) profileNumber.textContent = data.number;
+      if (profileEmail) profileEmail.textContent = data.email;
+      if (profileAvatar) profileAvatar.src = data.avatar;
+      profilePanel?.classList.remove('hidden');
+      memberCard?.classList.add('hidden');
+      if (pageTitle) {
+        pageTitle.textContent = 'Profile';
+      }
+    }
+  });
+
+  dashboardNav?.addEventListener('click', (event) => {
+    event.preventDefault();
+    memberCard?.classList.remove('hidden');
+    profilePanel?.classList.add('hidden');
+    if (pageTitle) {
+      pageTitle.textContent = 'Dashboard';
+    }
+  });
+</script>
+
+</html>
+
