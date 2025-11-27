@@ -99,20 +99,6 @@
   const dashboardNav = document.getElementById('dashboardNav');
   const pageTitle = document.getElementById('pageTitle');
 
-  if (profileToggle && profileMenu) {
-    profileToggle.addEventListener('click', () => {
-      const isOpen = profileMenu.classList.toggle('open');
-      profileToggle.setAttribute('aria-expanded', isOpen);
-      if (isOpen) {
-        profileToggle.classList.add('active');
-        dashboardNav?.classList.remove('active');
-      } else if (!profileMenu.querySelector('.active')) {
-        profileToggle.classList.remove('active');
-        dashboardNav?.classList.add('active');
-      }
-    });
-  }
-
   const profileName = document.getElementById('profileName');
   const profileAge = document.getElementById('profileAge');
   const profileAddress = document.getElementById('profileAddress');
@@ -163,42 +149,93 @@
   };
 
   const profileAvatar = document.querySelector('#profilePanel img');
+  const VIEW_STATE_KEY = 'appViewState';
+
+  const saveViewState = (state) => {
+    try {
+      localStorage.setItem(VIEW_STATE_KEY, JSON.stringify(state));
+    } catch {
+      // ignore storage errors in private mode
+    }
+  };
+
+  const getSavedViewState = () => {
+    try {
+      const raw = localStorage.getItem(VIEW_STATE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const showDashboard = (persist = true) => {
+    memberCard?.classList.remove('hidden');
+    profilePanel?.classList.add('hidden');
+    profileMenu?.classList.remove('open');
+    profileToggle?.setAttribute('aria-expanded', 'false');
+    profileMenu?.querySelectorAll('a').forEach((link) => link.classList.remove('active'));
+    dashboardNav?.classList.add('active');
+    profileToggle?.classList.remove('active');
+    if (pageTitle) pageTitle.textContent = 'Dashboard';
+    if (persist) saveViewState({ view: 'dashboard' });
+  };
+
+  const showProfile = (profileId, persist = true) => {
+    const data = profileData[profileId];
+    if (!data) return;
+    if (profileName) profileName.textContent = data.name;
+    if (profileAge) profileAge.textContent = data.age;
+    if (profileAddress) profileAddress.textContent = data.address;
+    if (profileNumber) profileNumber.textContent = data.number;
+    if (profileEmail) profileEmail.textContent = data.email;
+    if (profileAvatar) profileAvatar.src = data.avatar;
+    profileMenu?.classList.add('open');
+    profileToggle?.setAttribute('aria-expanded', 'true');
+    profileMenu?.querySelectorAll('a').forEach((link) => {
+      if (link instanceof HTMLElement) {
+        link.classList.toggle('active', link.dataset.profile === profileId);
+      }
+    });
+    profilePanel?.classList.remove('hidden');
+    memberCard?.classList.add('hidden');
+    dashboardNav?.classList.remove('active');
+    profileToggle?.classList.add('active');
+    if (pageTitle) pageTitle.textContent = 'Profile';
+    if (persist) saveViewState({ view: 'profile', profileId });
+  };
+
+  if (profileToggle && profileMenu) {
+    profileToggle.addEventListener('click', () => {
+      const isOpen = profileMenu.classList.toggle('open');
+      profileToggle.setAttribute('aria-expanded', isOpen);
+      if (isOpen) {
+        profileToggle.classList.add('active');
+        dashboardNav?.classList.remove('active');
+      } else if (!profileMenu.querySelector('.active')) {
+        showDashboard();
+      }
+    });
+  }
 
   profileMenu?.addEventListener('click', (event) => {
     const target = event.target;
     if (target instanceof HTMLElement && target.dataset.profile) {
-      const data = profileData[target.dataset.profile];
-      if (!data) return;
       event.preventDefault();
-      profileMenu.querySelectorAll('a').forEach((link) => link.classList.remove('active'));
-      target.classList.add('active');
-      if (profileName) profileName.textContent = data.name;
-      if (profileAge) profileAge.textContent = data.age;
-      if (profileAddress) profileAddress.textContent = data.address;
-      if (profileNumber) profileNumber.textContent = data.number;
-      if (profileEmail) profileEmail.textContent = data.email;
-      if (profileAvatar) profileAvatar.src = data.avatar;
-      profilePanel?.classList.remove('hidden');
-      memberCard?.classList.add('hidden');
-      dashboardNav?.classList.remove('active');
-      profileToggle?.classList.add('active');
-      if (pageTitle) {
-        pageTitle.textContent = 'Profile';
-      }
+      showProfile(target.dataset.profile);
     }
   });
 
   dashboardNav?.addEventListener('click', (event) => {
     event.preventDefault();
-    memberCard?.classList.remove('hidden');
-    profilePanel?.classList.add('hidden');
-    profileMenu?.querySelectorAll('a').forEach((link) => link.classList.remove('active'));
-    dashboardNav?.classList.add('active');
-    profileToggle?.classList.remove('active');
-    if (pageTitle) {
-      pageTitle.textContent = 'Dashboard';
-    }
+    showDashboard();
   });
+
+  const savedState = getSavedViewState();
+  if (savedState?.view === 'profile' && savedState.profileId) {
+    showProfile(savedState.profileId, false);
+  } else {
+    showDashboard(false);
+  }
 </script>
 
 </html>
